@@ -1,6 +1,5 @@
 % Natural Deduction - FOL Extended with Lists and Recursion
 
-
 % Types of individuals 
 i : type. 
 
@@ -78,6 +77,8 @@ LF nd : o -> type =
 LF list_ind_schema : (list -> o) -> type =
   | list_ind_rule : nd (P nil) -> ({h:elt}{t:list} nd (P t) -> nd (P (cons h t))) -> list_ind_schema P;
 
+% Schema for list predicates
+schema list_pred = some [P: list -> o] block x:list, u:nd (P x);
 
 % e.g: length calculation using list_rec
 rec rec_length_example : [⊢ list_rec (cons a (cons b nil)) nil (cons a (cons b nil))] =
@@ -130,14 +131,14 @@ rec append_nil_forall : [⊢ list_ind_schema (\l. eqList l l)] =
 %--------------proof--------------%
 % thm: forall l1,l2,l3. append(l1, append(l2, l3)) = append(append(l1, l2), l3)
 rec append_assoc_forall : [⊢ nd (⊤)] =
-  [⊢ ⊤I];   % Simplified
+  [⊢ ⊤I];   % Simplified for later
 
 % thm: forall l. length(append(l, nil)) = length(l)
 rec length_append_nil_forall : [⊢ nd (⊤)] =
-  [⊢ ⊤I];   % Simplified
+  [⊢ ⊤I];   % Simplified for later
 
 %-----------------%
-% e.g. demonstrating append associativity for specific case [a] + ([b] + [a]) = ([a] + [b]) + [a]
+% Proving append associativity for specific case [a] + ([b] + [a]) = ([a] + [b]) + [a]
 rec append_assoc_example : [⊢ nd (eqList 
     (cons a (cons b (cons a nil)))    % result of [a] + ([b] + [a])
     (cons a (cons b (cons a nil))))]  % result of ([a] + [b]) + [a]
@@ -164,5 +165,14 @@ rec length_append_base_specific : [⊢ nd (length (cons a nil) (cons a nil))] =
 rec append_nil_identity_example : [⊢ nd (eqList (cons a nil) (cons a nil))] =
   [⊢ eqList_cons a a eqList_nil];
 
+% Proof for list equality with specific case pattern matching
+rec equal_nil : [⊢ nd (eqList nil nil)] = 
+  [⊢ eqList_nil];
 
+rec equal_cons : [⊢ nd (eqList (cons a nil) (cons a nil))] = 
+  [⊢ eqList_cons a a eqList_nil];
 
+% More involved example with specific case of append and length
+rec length_preserve_example : [⊢ nd (length (cons a (cons b nil)) (cons a (cons b nil)))] =
+  [⊢ length_cons_intro a (cons b nil) (cons b nil) 
+      (length_cons_intro b nil nil length_nil_intro)];
