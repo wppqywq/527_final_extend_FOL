@@ -3,15 +3,14 @@
 % Types of individuals 
 i : type. 
 
-% Define constants to use in examples
 LF elt : type = 
   | a : elt     % constant a
   | b : elt;    % constant b
 
-% List type - represent both lists and natural numbers (as lists of length n)
+% List type represent both lists and natural numbers (as lists of length n)
 LF list : type = 
   | nil : list    % Empty list (zero)
-  | cons : elt -> list -> list ; % adding one element also represents successor
+  | cons : elt -> list -> list ; % add
 
 % System T style recursion operator for lists
 LF list_rec : list -> list -> list -> type =
@@ -80,7 +79,8 @@ LF list_ind_schema : (list -> o) -> type =
 % Schema for list predicates
 schema list_pred = some [P: list -> o] block x:list, u:nd (P x);
 
-% e.g: length calculation using list_rec
+%--------example---------%
+% e.g: length
 rec rec_length_example : [⊢ list_rec (cons a (cons b nil)) nil (cons a (cons b nil))] =
   [⊢ list_rec_cons a (cons b nil) nil (cons b nil)
       (list_rec_cons b nil nil nil 
@@ -91,7 +91,8 @@ rec rec_append_example : [⊢ list_rec (cons a nil) (cons b nil) (cons a (cons b
   [⊢ list_rec_cons a nil (cons b nil) (cons b nil)
       (list_rec_nil (cons b nil))];
 
-%% Simple specific cases - list operations
+%-----------------%
+% Simple specific cases - list operations
 
 % add nil with nil
 rec append_nil_nil : [⊢ nd (append nil nil nil)] =
@@ -101,7 +102,7 @@ rec append_nil_nil : [⊢ nd (append nil nil nil)] =
 rec append_nil_cons_example : [⊢ nd (append nil (cons a nil) (cons a nil))] =
   [⊢ append_nil_intro (cons a nil)];
   
-% Length of empty list is empty list
+% Length of empty list
 rec length_nil_proof : [⊢ nd (length nil nil)] =
   [⊢ length_nil_intro];
 
@@ -117,7 +118,7 @@ rec add_as_append_example : [⊢ nd (append (cons a nil) (cons b nil) (cons a (c
 rec length_append_example : [⊢ nd (length (cons a (cons b nil)) (cons a (cons b nil)))] =
   [⊢ length_cons_intro a (cons b nil) (cons b nil) (length_cons_intro b nil nil length_nil_intro)];
 
-
+%-----------------%
 % Structural induction proofs (with quantifiers)
 
 % Using list induction to prove: forall l. append(l, nil) = l
@@ -127,8 +128,7 @@ rec append_nil_forall : [⊢ list_ind_schema (\l. eqList l l)] =
       eqList_nil
       (\h. \t. \ih. eqList_cons h h ih)]; 
 
-
-%--------------proof--------------%
+%--------simplified--------%
 % thm: forall l1,l2,l3. append(l1, append(l2, l3)) = append(append(l1, l2), l3)
 rec append_assoc_forall : [⊢ nd (⊤)] =
   [⊢ ⊤I];   % Simplified for later
@@ -137,7 +137,7 @@ rec append_assoc_forall : [⊢ nd (⊤)] =
 rec length_append_nil_forall : [⊢ nd (⊤)] =
   [⊢ ⊤I];   % Simplified for later
 
-%-----------------%
+%--------example---------%
 % Proving append associativity for specific case [a] + ([b] + [a]) = ([a] + [b]) + [a]
 rec append_assoc_example : [⊢ nd (eqList 
     (cons a (cons b (cons a nil)))    % result of [a] + ([b] + [a])
@@ -145,14 +145,14 @@ rec append_assoc_example : [⊢ nd (eqList
   =
   [⊢ eqList_refl (cons a (cons b (cons a nil)))];
 
-% e.g. showing length preservation when appending nil
+% showing length preservation when appending nil
 rec length_append_nil_example : [⊢ nd (eqList 
     (cons a (cons b nil))     % length of [a,b]
     (cons a (cons b nil)))]   % length of [a,b]+[]
   =
   [⊢ eqList_refl (cons a (cons b nil))];
 
-%-----------------%
+%--------more examples--------%
 % e.g. for basic list equalities
 rec list_equality_example : [⊢ nd (eqList (cons a (cons b nil)) (cons a (cons b nil)))] =
   [⊢ eqList_cons a a (eqList_cons b b eqList_nil)];
@@ -165,6 +165,7 @@ rec length_append_base_specific : [⊢ nd (length (cons a nil) (cons a nil))] =
 rec append_nil_identity_example : [⊢ nd (eqList (cons a nil) (cons a nil))] =
   [⊢ eqList_cons a a eqList_nil];
 
+%-----------more examples----------%
 % Proof for list equality with specific case pattern matching
 rec equal_nil : [⊢ nd (eqList nil nil)] = 
   [⊢ eqList_nil];
@@ -172,7 +173,8 @@ rec equal_nil : [⊢ nd (eqList nil nil)] =
 rec equal_cons : [⊢ nd (eqList (cons a nil) (cons a nil))] = 
   [⊢ eqList_cons a a eqList_nil];
 
-% More involved example with specific case of append and length
+% More more example: specific case of append and length
 rec length_preserve_example : [⊢ nd (length (cons a (cons b nil)) (cons a (cons b nil)))] =
   [⊢ length_cons_intro a (cons b nil) (cons b nil) 
       (length_cons_intro b nil nil length_nil_intro)];
+
