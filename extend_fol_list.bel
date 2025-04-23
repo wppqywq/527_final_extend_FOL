@@ -131,11 +131,11 @@ rec append_nil_forall : [⊢ list_ind_schema (\l. eqList l l)] =
 %--------simplified--------%
 % thm: forall l1,l2,l3. append(l1, append(l2, l3)) = append(append(l1, l2), l3)
 rec append_assoc_forall : [⊢ nd (⊤)] =
-  [⊢ ⊤I];   % Simplified for later
+  [⊢ ⊤I];   % Simplified
 
 % thm: forall l. length(append(l, nil)) = length(l)
 rec length_append_nil_forall : [⊢ nd (⊤)] =
-  [⊢ ⊤I];   % Simplified for later
+  [⊢ ⊤I];   % Simplified
 
 %--------example---------%
 % Proving append associativity for specific case [a] + ([b] + [a]) = ([a] + [b]) + [a]
