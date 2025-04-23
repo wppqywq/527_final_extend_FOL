@@ -1,7 +1,7 @@
 % Natural Deduction - FOL Extended with nat and list
 
-%% Types of individuals and new data types
-i : type.  % Type of individuals
+% Types of individuals and new data types
+i : type. 
 
 LF nat : type = 
   | z : nat 
@@ -99,29 +99,29 @@ LF nat_ind_schema : (nat -> o) -> type =
 LF list_ind_schema : (list -> o) -> type =
   | list_ind_rule : nd (Q nil) -> ({h:nat}{t:list} nd (Q t) -> nd (Q (cons h t))) -> list_ind_schema Q;
 
-% Nat induction example (object-level theorem)
+% Nat induction example (object-level thm)
 rec nat_ind_example : [⊢ nat_ind_schema (\n. eq n n)] =
   [⊢ nat_ind_rule (eq_refl z) (\n. \ih. eq_suc ih)];
 
-% List induction example (object-level theorem)
+% List induction example (object-level thm)
 rec list_ind_example : [⊢ list_ind_schema (\l. eqList l l)] =
   [⊢ list_ind_rule eqList_nil (\h. \t. \ih. eqList_cons (eq_refl h) ih)];
 
-% Theorem: add(n, z) = n (using nat induction schema)
+% thm: add(n, z) = n (using nat induction schema)
 rec add_z_identity : [⊢ nat_ind_schema (\n. eq n n)] =
   [⊢ nat_ind_rule 
        (eq_refl z) 
        (\n. \ih. eq_suc ih)
   ];
 
-% Theorem: append(l, nil) = l (using list induction schema)
+% thm: append(l, nil) = l (using list induction schema)
 rec append_nil_identity : [⊢ list_ind_schema (\l. eqList l l)] =
   [⊢ list_ind_rule 
        eqList_nil
        (\h. \t. \ih. eqList_cons (eq_refl h) ih)
   ];
 
-% Theorem: length(append(l1, l2)) = add(length(l1), length(l2))
+% thm: length(append(l1, l2)) = add(length(l1), length(l2))
 % Base case: nil appended with any list 
 rec append_nil_result : [⊢ nd (appendR nil nil nil)] =
   [⊢ appendR_nil nil];
@@ -144,11 +144,11 @@ rec append_example_proof : [⊢ nd (appendR (cons z nil) (cons (suc z) nil) (con
 rec length_nil_proof : [⊢ nd (lengthR nil z)] =
   [⊢ lengthR_nil];
 
-% Appending nil with nil gives nil
+% add nil with nil gives nil
 rec append_nil_nil : [⊢ nd (appendR nil nil nil)] =
   [⊢ appendR_nil nil];
   
-% Appending nil with [0] gives [0]
+% add nil with [0] gives [0]
 rec append_nil_cons : [⊢ nd (appendR nil (cons z nil) (cons z nil))] =
   [⊢ appendR_nil (cons z nil)];
   
@@ -159,7 +159,7 @@ rec length_append_base_specific1 : [⊢ nd (appendR nil (cons z nil) (cons z nil
 rec length_append_base_specific2 : [⊢ nd (lengthR (cons z nil) (suc z))] =
   [⊢ lengthR_cons z nil z lengthR_nil];
 
-% Extended theorems about arithmetic properties
+% Extended thms about arithmetic properties
 
 % Simple addition examples
 rec add_identity : [⊢ nd (addR z z z)] =

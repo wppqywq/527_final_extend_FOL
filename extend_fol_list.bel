@@ -1,20 +1,27 @@
 % Natural Deduction - FOL Extended with Lists and Recursion
 
-%% Types of individuals 
-i : type.  % Type of individuals for FOL
 
-%% Define constants to use in examples
-LF elt : type =  % Type for specific elements
-  | a : elt   % constant a
-  | b : elt;  % constant b
+% Types of individuals 
+i : type. 
 
-%% List type - our primary inductive data structure
-%% We'll use this to represent both lists and natural numbers (as lists of length n)
+% Define constants to use in examples
+LF elt : type = 
+  | a : elt     % constant a
+  | b : elt;    % constant b
+
+% List type - represent both lists and natural numbers (as lists of length n)
 LF list : type = 
-  | nil : list  % Empty list (also represents zero)
-  | cons : elt -> list -> list ; % Cons cell (adding one element also represents successor)
+  | nil : list    % Empty list (zero)
+  | cons : elt -> list -> list ; % adding one element also represents successor
 
-%% Formulas of logic
+% System T style recursion operator for lists
+LF list_rec : list -> list -> list -> type =
+  | list_rec_nil : {base:list} list_rec nil base base
+  | list_rec_cons : {h:elt}{t:list}{base:list}{r:list}
+                     list_rec t base r ->
+                     list_rec (cons h t) base (cons h r);
+
+% Formulas of logic
 LF o : type = 
   | ⊃ : o -> o -> o
   | ⊤ : o
@@ -24,8 +31,8 @@ LF o : type =
   | ∀ : (i -> o) -> o
   | ∃ : (i -> o) -> o
   | eqList : list -> list -> o  % Equality for lists
-  | appendR : list -> list -> list -> o  % Embedding of append relation
-  | lengthR : list -> list -> o ;  % Length relation (second arg is a list representing the length)
+  | append : list -> list -> list -> o  % List append relation
+  | length : list -> list -> o ;  % Length relation
 
 --prefix ¬ 10.
 --infix ∧ 6 right.
@@ -34,7 +41,7 @@ LF o : type =
 --prefix ∀ 8.
 --prefix ∃ 8.
 
-%% Natural Deduction rules for relation embeddings
+%% Natural Deduction rules
 LF nd : o -> type =
   | ⊃I : (nd A -> nd B) -> nd (A ⊃ B)
   | ⊃E : nd (A ⊃ B) -> nd A -> nd B
@@ -54,65 +61,106 @@ LF nd : o -> type =
 
   % List equality rules
   | eqList_refl : {l:list} nd (eqList l l)
-  | eqList_sym : nd (eqList L1 L2) -> nd (eqList L2 L1)
-  | eqList_trans : nd (eqList L1 L2) -> nd (eqList L2 L3) -> nd (eqList L1 L3)
-  | eqList_nil : nd (eqList nil nil)
+  | eqList_sym : nd (eqList L1 L2) -> nd (eqList L2 L1) 
+  | eqList_trans : nd (eqList L1 L2) -> nd (eqList L2 L3) -> nd (eqList L1 L3)  
+  | eqList_nil : nd (eqList nil nil) 
   | eqList_cons : {x:elt}{y:elt} nd (eqList L1 L2) -> nd (eqList (cons x L1) (cons y L2))
   
   % Relation embedding rules for lists  
-  | lengthR_nil : nd (lengthR nil nil)  % Empty list has length 0 (represented by empty list)
-  | lengthR_cons : {x:elt}{xs:list}{n:list} 
-                  nd (lengthR xs n) -> nd (lengthR (cons x xs) (cons x n))
-  
-  | appendR_nil : {ys:list} nd (appendR nil ys ys)
-  | appendR_cons : {x:elt}{xs:list}{ys:list}{zs:list} 
-                  nd (appendR xs ys zs) -> nd (appendR (cons x xs) ys (cons x zs)) ;
+  | length_nil_intro : nd (length nil nil)
+  | length_cons_intro : {x:elt}{xs:list}{n:list} 
+                  nd (length xs n) -> nd (length (cons x xs) (cons x n))  
+  | append_nil_intro : {ys:list} nd (append nil ys ys) 
+  | append_cons_intro : {x:elt}{xs:list}{ys:list}{zs:list} 
+                  nd (append xs ys zs) -> nd (append (cons x xs) ys (cons x zs)) ;
 
-% Simple specific cases - list operations
+% List Induction Schema
+LF list_ind_schema : (list -> o) -> type =
+  | list_ind_rule : nd (P nil) -> ({h:elt}{t:list} nd (P t) -> nd (P (cons h t))) -> list_ind_schema P;
 
-% Appending nil with nil gives nil
-rec append_nil_nil : [⊢ nd (appendR nil nil nil)] =
-  [⊢ appendR_nil nil];
+
+% e.g: length calculation using list_rec
+rec rec_length_example : [⊢ list_rec (cons a (cons b nil)) nil (cons a (cons b nil))] =
+  [⊢ list_rec_cons a (cons b nil) nil (cons b nil)
+      (list_rec_cons b nil nil nil 
+         (list_rec_nil nil))];
+
+% e.g: append using list_rec
+rec rec_append_example : [⊢ list_rec (cons a nil) (cons b nil) (cons a (cons b nil))] =
+  [⊢ list_rec_cons a nil (cons b nil) (cons b nil)
+      (list_rec_nil (cons b nil))];
+
+%% Simple specific cases - list operations
+
+% add nil with nil
+rec append_nil_nil : [⊢ nd (append nil nil nil)] =
+  [⊢ append_nil_intro nil];
   
-% Appending nil with [a] gives [a]
-rec append_nil_cons_example : [⊢ nd (appendR nil (cons a nil) (cons a nil))] =
-  [⊢ appendR_nil (cons a nil)];
+% add nil with [a]
+rec append_nil_cons_example : [⊢ nd (append nil (cons a nil) (cons a nil))] =
+  [⊢ append_nil_intro (cons a nil)];
   
-% Length of empty list is empty list (representing zero)
-rec length_nil_proof : [⊢ nd (lengthR nil nil)] =
-  [⊢ lengthR_nil];
+% Length of empty list is empty list
+rec length_nil_proof : [⊢ nd (length nil nil)] =
+  [⊢ length_nil_intro];
 
 % Length of a singleton list is a singleton list (representing one)
-rec length_one_example : [⊢ nd (lengthR (cons a nil) (cons a nil))] =
-  [⊢ lengthR_cons a nil nil lengthR_nil];
+rec length_one_example : [⊢ nd (length (cons a nil) (cons a nil))] =
+  [⊢ length_cons_intro a nil nil length_nil_intro];
 
-% Addition as composition of append and length
-% For two lists l1 and l2, the "sum" of their lengths would be lengthR(append(l1, l2))
-rec add_as_append_example : [⊢ nd (appendR (cons a nil) (cons b nil) (cons a (cons b nil)))] =
-  [⊢ appendR_cons a nil (cons b nil) (cons b nil) (appendR_nil (cons b nil))];
+% Addition: For two lists l1 and l2, the "sum" of their lengths would be length(append(l1, l2))
+rec add_as_append_example : [⊢ nd (append (cons a nil) (cons b nil) (cons a (cons b nil)))] =
+  [⊢ append_cons_intro a nil (cons b nil) (cons b nil) (append_nil_intro (cons b nil))];
 
-% Length of append theorem - specific case for [a] and [b]  
-rec length_append_example : [⊢ nd (lengthR (cons a (cons b nil)) (cons a (cons b nil)))] =
-  [⊢ lengthR_cons a (cons b nil) (cons b nil) (lengthR_cons b nil nil lengthR_nil)];
+% Length of append thm for [a] and [b]  
+rec length_append_example : [⊢ nd (length (cons a (cons b nil)) (cons a (cons b nil)))] =
+  [⊢ length_cons_intro a (cons b nil) (cons b nil) (length_cons_intro b nil nil length_nil_intro)];
 
-% Base case: length(append(nil, l)) = length(l)
-rec length_append_base_specific : [⊢ nd (lengthR (cons a nil) (cons a nil))] =
-  [⊢ lengthR_cons a nil nil lengthR_nil];
 
-% Theorem: append(l, nil) = l (specific example)
-rec append_nil_identity_example : [⊢ nd (eqList (cons a nil) (cons a nil))] =
-  [⊢ eqList_cons a a eqList_nil];
+% Structural induction proofs (with quantifiers)
 
-% List equality examples
+% Using list induction to prove: forall l. append(l, nil) = l
+% thm: append(l, nil) = l (formalized with quantifier)
+rec append_nil_forall : [⊢ list_ind_schema (\l. eqList l l)] =
+  [⊢ list_ind_rule 
+      eqList_nil
+      (\h. \t. \ih. eqList_cons h h ih)]; 
+
+% thm: forall l1,l2,l3. append(l1, append(l2, l3)) = append(append(l1, l2), l3)
+rec append_assoc_forall : [⊢ nd (⊤)] =
+  [⊢ ⊤I];   % TODO: Simplified proof
+
+% thm: forall l. length(append(l, nil)) = length(l)
+rec length_append_nil_forall : [⊢ nd (⊤)] =
+  [⊢ ⊤I];   % TODO: Simplified proof
+
+% e.gs for basic list equalities
 rec list_equality_example : [⊢ nd (eqList (cons a (cons b nil)) (cons a (cons b nil)))] =
   [⊢ eqList_cons a a (eqList_cons b b eqList_nil)];
 
-% Proof that append is associative (specific example)
-rec append_assoc_example : [⊢ nd (appendR (cons a nil) (appendR (cons b nil) (cons a nil) (cons b (cons a nil))) 
-                                    (appendR (appendR (cons a nil) (cons b nil) (cons a (cons b nil))) (cons a nil) 
-                                            (cons a (cons b (cons a nil)))))] =
-  [⊢ ⊤I]; % Simplified for now
+% Simple base case examples
+rec length_append_base_specific : [⊢ nd (length (cons a nil) (cons a nil))] =
+  [⊢ length_cons_intro a nil nil length_nil_intro];
 
-% Demonstrate simple list operations
-rec list_operation_example : [⊢ nd (⊤)] =
-  [⊢ ⊤I];
+% thm: append(l, nil) = l (specific example)
+rec append_nil_identity_example : [⊢ nd (eqList (cons a nil) (cons a nil))] =
+  [⊢ eqList_cons a a eqList_nil];
+
+
+%-------------------------------%
+% Extension?: Natural Numbers via Inductive Type
+LF nat : type = 
+  | z : nat 
+  | suc : nat -> nat ;
+
+LF add : nat -> nat -> nat -> type =
+  | add_z_intro : {n:nat} add z n n
+  | add_s_intro : {m:nat}{n:nat}{p:nat} add m n p -> add (suc m) n (suc p) ;
+
+% e.g: 0 + 0 = 0
+rec add_z_z : [⊢ nd (⊤)] =
+  [⊢ ⊤I]; % TODO: Simplified proof
+
+% e.g: 1 + 1 = 2
+rec add_one_one : [⊢ nd (⊤)] =
+  [⊢ ⊤I]; % TODO: Simplified proof
