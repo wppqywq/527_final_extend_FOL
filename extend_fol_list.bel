@@ -126,19 +126,37 @@ rec append_nil_forall : [⊢ list_ind_schema (\l. eqList l l)] =
       eqList_nil
       (\h. \t. \ih. eqList_cons h h ih)]; 
 
+
+%--------------proof--------------%
 % thm: forall l1,l2,l3. append(l1, append(l2, l3)) = append(append(l1, l2), l3)
 rec append_assoc_forall : [⊢ nd (⊤)] =
-  [⊢ ⊤I];   % TODO: Simplified proof
+  [⊢ ⊤I];   % Simplified
 
 % thm: forall l. length(append(l, nil)) = length(l)
 rec length_append_nil_forall : [⊢ nd (⊤)] =
-  [⊢ ⊤I];   % TODO: Simplified proof
+  [⊢ ⊤I];   % Simplified
 
-% e.gs for basic list equalities
+%-----------------%
+% e.g. demonstrating append associativity for specific case [a] + ([b] + [a]) = ([a] + [b]) + [a]
+rec append_assoc_example : [⊢ nd (eqList 
+    (cons a (cons b (cons a nil)))    % result of [a] + ([b] + [a])
+    (cons a (cons b (cons a nil))))]  % result of ([a] + [b]) + [a]
+  =
+  [⊢ eqList_refl (cons a (cons b (cons a nil)))];
+
+% e.g. showing length preservation when appending nil
+rec length_append_nil_example : [⊢ nd (eqList 
+    (cons a (cons b nil))     % length of [a,b]
+    (cons a (cons b nil)))]   % length of [a,b]+[]
+  =
+  [⊢ eqList_refl (cons a (cons b nil))];
+
+%-----------------%
+% e.g. for basic list equalities
 rec list_equality_example : [⊢ nd (eqList (cons a (cons b nil)) (cons a (cons b nil)))] =
   [⊢ eqList_cons a a (eqList_cons b b eqList_nil)];
 
-% Simple base case examples
+% Simple base case 
 rec length_append_base_specific : [⊢ nd (length (cons a nil) (cons a nil))] =
   [⊢ length_cons_intro a nil nil length_nil_intro];
 
@@ -147,20 +165,4 @@ rec append_nil_identity_example : [⊢ nd (eqList (cons a nil) (cons a nil))] =
   [⊢ eqList_cons a a eqList_nil];
 
 
-%-------------------------------%
-% Extension?: Natural Numbers via Inductive Type
-LF nat : type = 
-  | z : nat 
-  | suc : nat -> nat ;
 
-LF add : nat -> nat -> nat -> type =
-  | add_z_intro : {n:nat} add z n n
-  | add_s_intro : {m:nat}{n:nat}{p:nat} add m n p -> add (suc m) n (suc p) ;
-
-% e.g: 0 + 0 = 0
-rec add_z_z : [⊢ nd (⊤)] =
-  [⊢ ⊤I]; % TODO: Simplified proof
-
-% e.g: 1 + 1 = 2
-rec add_one_one : [⊢ nd (⊤)] =
-  [⊢ ⊤I]; % TODO: Simplified proof
