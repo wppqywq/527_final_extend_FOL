@@ -13,7 +13,7 @@ Team Members:
 
 Contributions:
 - Anthony Beaudry: Project planning, report wirting (**To Be Specified**)
-- Tommy Zhou: Project planning, report wirting (**To Be Specified**)
+- Tommy Zhou: Focused on the syntax and semantics of the system, as well as the notes-style artifact
 - Claire Yang: Beluga implementation, example theorems.
 
 **All team members consent to making this project public and allowing it to be shared on Ed for future students to reference.**
@@ -43,7 +43,13 @@ Contributions:
     - Relation `add`, with basic example proofs
   - Preserved for reference and optional future use
 
+
 ## Core Contributions
 - List-based recursion modeled via `list_rec` (System T style)
 - Inductive schema over lists for formal proofs
 - Constructive examples type-checked in Beluga
+
+## Video Presentation
+We present our key ideas in the video below:
+
+[Youtube Link](https://youtu.be/WuVoTgnJytY)
