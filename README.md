@@ -63,12 +63,14 @@ Every one of us contributed to the project. Anthony mainly focused on the functi
   - Preserved for reference and optional future use
 
 
+## Video Presentation
+We present our key ideas in the video below:
+
+[Youtube Link](https://youtu.be/WuVoTgnJytY)
+
+
 ## Core Contributions
 - List-based recursion modeled via `list_rec` (System T style)
 - Inductive schema over lists for formal proofs
 - Constructive examples type-checked in Beluga
 
-## Video Presentation
-We present our key ideas in the video below:
-
-[Youtube Link](https://youtu.be/WuVoTgnJytY)
