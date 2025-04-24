@@ -12,13 +12,31 @@ Team Members:
 - Claire Yang (260898597)
 
 Contributions:
-- Anthony Beaudry: Project planning, report wirting (**To Be Specified**)
-- Tommy Zhou: Project planning, report wirting (**To Be Specified**)
-- Claire Yang: Beluga implementation, example theorems.
+Every one of us contributed to the project. Anthony mainly focused on the functions and properties of the system, Tommy mainly focused on the syntax and semantics of the system, and Claire mainly focused on the formalization of the system in Beluga.
 
 **All team members consent to making this project public and allowing it to be shared on Ed for future students to reference.**
 
-## File Structure
+
+## Project Deliverables
+
+- **`COMP527_Abstract.pdf`**
+  - Two-page extended abstract (excluding biography)
+  - Outlines:
+    - Project motivation and Related work
+    - Our proposed approach and formalization plan
+    - Team member responsibilities and contribution breakdown
+
+- **`COMP527_Artifacts.pdf`**
+  - Technical artifact documentation
+  - Includes:
+    - Summary of logic definitions and Beluga syntax
+    - Formal proofs: equality, length, append
+    - Induction schema explanations
+    - Soundness and completeness discussions
+    - Notes on encoding natural numbers via lists
+
+- **`COMP527_project_slides.pdf`**
+  - Slide deck for the 10-minute presentation video
 
 - **`extend_fol_list.bel`**
   - Core system: FOL + list + recursion
