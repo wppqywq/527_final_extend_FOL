@@ -36,7 +36,7 @@ Every one of us contributed to the project. Anthony mainly focused on the functi
     - Notes on encoding natural numbers via lists
 
 - **`COMP527_project_slides.pdf`**
-  - Slide deck for the 10-minute presentation video
+  - Slide deck for the 10-minute [presentation video](https://youtu.be/WuVoTgnJytY)
 
 - **`extend_fol_list.bel`**
   - Core system: FOL + list + recursion
