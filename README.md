@@ -15,7 +15,7 @@ Contributions:
 
 Every one of us contributed to the project. Anthony mainly focused on the functions and properties of the system, Tommy mainly focused on the syntax and semantics of the system, and Claire mainly focused on the formalization of the system in Beluga.
 
-**All team members consent to making this project public and allowing it to be shared on Ed for future students to reference.**
+**All team members consent to making this project public and allowing it to be shared on Ed for other students to reference.**
 
 
 ## Project Deliverables
